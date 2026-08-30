@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Movie</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">MOVIES</a>
+        <a href="about.html">ABOUT</a>
+    </nav>
+
+    <main>
+        <section id="movie-info"></section>
+
+        <section id="movie-gallery"></section>
+    </main>
+    <div id="image-viewer">
+
+        <button id="viewer-close" aria-label="Close">&times;</button>
+
+        <button id="viewer-prev" aria-label="Previous image">
+            &#10094;
+        </button>
+
+        <img id="viewer-image" src="" alt="">
+
+        <button id="viewer-next" aria-label="Next image">
+            &#10095;
+        </button>
+
+    </div>
+    <script src="data/movies.js"></script>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const folder = params.get("movie");
+
+        const movie = movies.find(movie => movie.folder === folder);
+        
+        const info = document.getElementById("movie-info");
+        const gallery = document.getElementById("movie-gallery");
+        
+        const viewer = document.getElementById("image-viewer");
+        const viewerImage = document.getElementById("viewer-image");
+        const viewerClose = document.getElementById("viewer-close");
+        const viewerPrev = document.getElementById("viewer-prev");
+        const viewerNext = document.getElementById("viewer-next");
+
+        let galleryImages = [];
+        let currentImage = 0;
+
+        if (movie) {
+
+            const title = document.createElement("h1");
+            title.textContent = movie.title;
+
+            const content = document.createElement("div");
+
+            
+            function addArtistLine(label, value) {
+
+                const p = document.createElement("p");
+
+                p.append(`${label}: `);
+
+                if (!value || (Array.isArray(value) && value.length === 0)) {
+
+                    p.append("Unknown");
+
+                } else {
+
+                    const values =
+                        Array.isArray(value) ? value : [value];
+
+                    values.forEach((artist, index) => {
+
+                        const link =
+                            document.createElement("a");
+
+                        link.className =
+                            "artist-link";
+
+                        link.href =
+                            `artist.html?artist=${encodeURIComponent(artist)}`;
+
+                        link.textContent =
+                            artist;
+
+                        p.appendChild(link);
+
+                        if (index < values.length - 1) {
+                            p.append(", ");
+                        }
+
+                    });
+                }
+
+                content.appendChild(p);
+            }
+
+
+            addArtistLine("Director", movie.director);
+
+            addArtistLine(
+                "Cinematographer",
+                movie.cinematographer
+            );
+
+            addArtistLine(
+                "Release Year",
+                movie.year
+            );
+
+            addArtistLine (
+                "Aspect Ratios",
+                movie.aspectRatios
+            );
+
+            info.appendChild(title);
+            info.appendChild(content);
+            
+            for (let i = 1; i <= movie.images; i++) {
+
+                const image = document.createElement("img");
+
+                const number = String(i).padStart(2, "0");
+
+                image.src = `images/${movie.folder}/${number}.png`;
+                image.alt = movie.title;
+
+                gallery.appendChild(image);
+                galleryImages.push(image);
+                
+                image.addEventListener("click", function () {
+
+                    currentImage = galleryImages.indexOf(image);
+
+                    openViewer();
+
+                });
+            }
+
+        }
+        else {
+            const p = document.createElement("p");
+            p.textContent = "Movie not found";
+            info.append(p);
+
+        }
+        function openViewer() {
+
+            viewerImage.src = galleryImages[currentImage].src;
+            viewerImage.alt = galleryImages[currentImage].alt;
+
+            viewer.classList.add("show");
+            document.body.classList.add("viewer-open");
+        }
+
+
+        function closeViewer() {
+            viewer.classList.remove("show");
+            document.body.classList.remove("viewer-open");
+        }
+
+
+        function showNextImage() {
+            currentImage++;
+
+            if (currentImage >= galleryImages.length) {
+                currentImage = 0;
+            }
+
+            viewerImage.src = galleryImages[currentImage].src;
+            viewerImage.alt = galleryImages[currentImage].alt;
+        }
+
+
+        function showPreviousImage() {
+            currentImage--;
+
+            if (currentImage < 0) {
+                currentImage = galleryImages.length - 1;
+            }
+
+            viewerImage.src = galleryImages[currentImage].src;
+            viewerImage.alt = galleryImages[currentImage].alt;
+        }
+
+
+        viewerClose.addEventListener("click", closeViewer);
+
+        viewerNext.addEventListener("click", showNextImage);
+
+        viewerPrev.addEventListener("click", showPreviousImage);
+
+
+        viewer.addEventListener("click", (event) => {
+            if (event.target === viewer) {
+                closeViewer();
+            }
+        });
+
+
+        document.addEventListener("keydown", (event) => {
+
+            if (!viewer.classList.contains("show")) {
+                return;
+            }
+
+            if (event.key === "Escape") {
+                closeViewer();
+            }
+
+            if (event.key === "ArrowRight") {
+                showNextImage();
+            }
+
+            if (event.key === "ArrowLeft") {
+                showPreviousImage();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Movie Gallery</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">MOVIES</a>
+        <a href="about.html">ABOUT</a>
+
+        <div id="search-wrapper">
+        <button id="search-button">
+            &#128269
+        </button>
+
+        <input
+            type="search"
+            id="movie-search"
+            placeholder="Search..."
+            autocomplete="off"
+        >
+    </nav>
+    </div>
+
+    <main id="movie-grid"></main>
+
+    <script src="data/movies.js"></script>
+
+    <script>
+        const grid = document.getElementById("movie-grid");
+        const search = document.getElementById("movie-search");
+        function displayMovies(movieList) {
+            grid.innerHTML = "";
+
+            movieList.forEach(movie => {
+                const link = document.createElement("a");
+
+                link.href =
+                    `movie.html?movie=${encodeURIComponent(movie.folder)}`;
+
+                const image = document.createElement("img");
+
+                image.src =
+                    `images/${movie.folder}/cover.jpg`;
+
+                image.alt = movie.title;
+
+                const caption =
+                    document.createElement("figcaption");
+
+                caption.textContent = movie.title;
+
+                link.appendChild(image);
+                link.appendChild(caption);
+
+                grid.appendChild(link);
+            });
+        }
+
+        displayMovies(movies);
+
+        search.addEventListener("input", function () {
+            const query = search.value.trim().toLowerCase();
+
+            const filteredMovies = movies.filter(movie =>
+                movie.title.toLowerCase().includes(query)
+            );
+
+            displayMovies(filteredMovies);
+        });
+        const searchButton = document.getElementById("search-button");
+        const searchWrapper = document.getElementById("search-wrapper");
+
+        searchButton.addEventListener("click", function () {
+            searchWrapper.classList.toggle("open");
+
+            if (searchWrapper.classList.contains("open")) {
+                search.focus();
+            }
+        });
+    </script>
+    
+
+</body>
+</html>

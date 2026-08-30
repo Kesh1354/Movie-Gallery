@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Artist</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">MOVIES</a>
+        <a href="about.html">ABOUT</a>
+    </nav>
+
+    <main>
+        <section id="artist-info"></section>
+        <section id="artist-grid"></section>
+    </main>
+
+    <script src="data/movies.js"></script>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const artistName = params.get("artist");
+
+        const info = document.getElementById("artist-info");
+        const grid = document.getElementById("artist-grid");
+
+        function normalize(value) {
+            return String(value ?? "").trim().toLowerCase();
+        }
+
+        function matchesArtist(movie) {
+
+            if (!artistName) {
+                return false;
+            }
+
+            const wanted = normalize(artistName);
+
+            return Object.values(movie).some(value => {
+
+                if (Array.isArray(value)) {
+
+                    return value.some(item =>
+                        normalize(item) === wanted
+                    );
+
+                }
+
+                return normalize(value) === wanted;
+            });
+        }
+
+        const artistMovies = movies.filter(matchesArtist);
+
+
+        if (artistName && artistMovies.length > 0) {
+
+            const heading = document.createElement("h1");
+
+            heading.textContent = artistName;
+
+            info.appendChild(heading);
+
+            document.title = `${artistName} — Artist`;
+
+        } else {
+
+            const heading = document.createElement("h1");
+
+            heading.textContent = "Artist not found";
+
+            info.appendChild(heading);
+        }
+
+
+
+        artistMovies.forEach(movie => {
+
+            const link = document.createElement("a");
+
+            link.href =
+                `movie.html?movie=${encodeURIComponent(movie.folder)}`;
+
+            const image = document.createElement("img");
+
+            image.src =
+                `images/${movie.folder}/cover.jpg`;
+
+            image.alt = movie.title;
+
+            const caption =
+                document.createElement("figcaption");
+
+            caption.textContent = movie.title;
+
+            link.appendChild(image);
+            link.appendChild(caption);
+
+            grid.appendChild(link);
+        });
+        
+
+    </script>
+
+</body>
+
+</html>
