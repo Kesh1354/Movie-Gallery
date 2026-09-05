@@ -14,6 +14,19 @@
     <nav>
         <a href="index.html">MOVIES</a>
         <a href="about.html">ABOUT</a>
+
+        <div id="search-wrapper">
+        <button id="search-button">
+            &#128269
+        </button>
+
+        <input
+            type="search"
+            id="movie-search"
+            placeholder="Search..."
+            autocomplete="off"
+        >
+        </div>
     </nav>
 
     <main>
@@ -43,10 +56,10 @@
         const folder = params.get("movie");
 
         const movie = movies.find(movie => movie.folder === folder);
-        
+
         const info = document.getElementById("movie-info");
         const gallery = document.getElementById("movie-gallery");
-        
+
         const viewer = document.getElementById("image-viewer");
         const viewerImage = document.getElementById("viewer-image");
         const viewerClose = document.getElementById("viewer-close");
@@ -63,7 +76,7 @@
 
             const content = document.createElement("div");
 
-            
+
             function addArtistLine(label, value) {
 
                 const p = document.createElement("p");
@@ -125,7 +138,7 @@
 
             info.appendChild(title);
             info.appendChild(content);
-            
+
             for (let i = 1; i <= movie.images; i++) {
 
                 const image = document.createElement("img");
@@ -137,7 +150,7 @@
 
                 gallery.appendChild(image);
                 galleryImages.push(image);
-                
+
                 image.addEventListener("click", function () {
 
                     currentImage = galleryImages.indexOf(image);
@@ -228,6 +241,7 @@
         });
     </script>
 
+    <script src="search.js"></script>
 </body>
 
 </html>

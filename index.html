@@ -17,22 +17,18 @@
         <a href="about.html">ABOUT</a>
 
         <div id="search-wrapper">
-        <button id="search-button">
-            &#128269
-        </button>
+            <button id="search-button">
+                &#128269
+            </button>
 
-        <input
-            type="search"
-            id="movie-search"
-            placeholder="Search..."
-            autocomplete="off"
-        >
+            <input type="search" id="movie-search" placeholder="Search..." autocomplete="off">
+        </div>
     </nav>
-    </div>
 
     <main id="movie-grid"></main>
 
     <script src="data/movies.js"></script>
+    <script src="search.js"></script>
 
     <script>
         const grid = document.getElementById("movie-grid");
@@ -65,7 +61,23 @@
             });
         }
 
-        displayMovies(movies);
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get("search");
+
+        if (searchQuery) {
+            search.value = searchQuery;
+            const filteredMovies = movies.filter(movie =>
+                movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            displayMovies(filteredMovies);
+
+            const wrapper = document.getElementById("search-wrapper");
+            if (wrapper) {
+                wrapper.classList.add("open");
+            }
+        } else {
+            displayMovies(movies);
+        }
 
         search.addEventListener("input", function () {
             const query = search.value.trim().toLowerCase();
@@ -76,18 +88,9 @@
 
             displayMovies(filteredMovies);
         });
-        const searchButton = document.getElementById("search-button");
-        const searchWrapper = document.getElementById("search-wrapper");
-
-        searchButton.addEventListener("click", function () {
-            searchWrapper.classList.toggle("open");
-
-            if (searchWrapper.classList.contains("open")) {
-                search.focus();
-            }
-        });
     </script>
-    
+
 
 </body>
+
 </html>
